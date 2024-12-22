@@ -16,14 +16,3 @@ function handleEscClose(event) {
     }
   }
 }
-
-export function openImagePopup(imagePopup, { src, alt, caption }) {
-  const popupImage = imagePopup.querySelector('.popup__image');
-  const popupCaption = imagePopup.querySelector('.popup__caption');
-
-  popupImage.src = src;
-  popupImage.alt = alt;
-  popupCaption.textContent = caption;
-
-  openModal(imagePopup);
-}
