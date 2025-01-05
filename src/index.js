@@ -2,6 +2,7 @@ import './pages/index.css';
 import { initialCards } from './components/cards.js';
 import { createCard, deleteCard, toggleLike } from './components/card.js';
 import { openModal, closeModal } from './components/modal.js';
+import { enableValidation, clearValidation } from './components/validation.js';
 
 const placesList = document.querySelector('.places__list');
 
@@ -24,10 +25,20 @@ const jobInput = editFormElement.querySelector('.popup__input_type_description')
 const popupImage = imagePopup.querySelector('.popup__image');
 const popupCaption = imagePopup.querySelector('.popup__caption');
 
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible',
+};
+
 // Функция для заполнения формы редактирования профиля
 function fillProfileForm() {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
+  clearValidation(editFormElement, validationConfig);
 }
 
 // Обработчик для отправки формы редактирования профиля
@@ -55,6 +66,7 @@ function handleNewCardFormSubmit(evt) {
   placesList.prepend(cardElement);
 
   newCardFormElement.reset();
+  clearValidation(newCardFormElement, validationConfig);
   closeModal(newCardPopup);
 }
 
@@ -85,14 +97,12 @@ editProfileButton.addEventListener('click', () => {
 });
 
 addCardButton.addEventListener('click', () => {
+  clearValidation(newCardFormElement, validationConfig);
   openModal(newCardPopup);
 });
 
 editFormElement.addEventListener('submit', handleEditProfileFormSubmit);
 newCardFormElement.addEventListener('submit', handleNewCardFormSubmit);
-
-// Инициализация карточек
-renderCards(initialCards);
 
 // Закрытие попапов
 const popups = document.querySelectorAll('.popup');
@@ -106,3 +116,9 @@ popups.forEach(popup => {
     }
   });
 });
+
+// Включение валидации
+enableValidation(validationConfig);
+
+// Инициализация карточек
+renderCards(initialCards);
