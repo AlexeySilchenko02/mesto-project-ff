@@ -1,26 +1,52 @@
+import { addLike, removeLike } from './api.js';
+
 const cardTemplate = document.querySelector('#card-template').content;
 
-export function createCard(data, handleCardDelete, handleLikeToggle, handleImageClick) {
+export function createCard(data, userId, handleCardDelete, handleImageClick) {
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
 
   const cardImage = cardElement.querySelector('.card__image');
   const cardTitle = cardElement.querySelector('.card__title');
   const likeButton = cardElement.querySelector('.card__like-button');
   const deleteButton = cardElement.querySelector('.card__delete-button');
+  const likeCounter = cardElement.querySelector('.like-button__count');
 
   cardImage.src = data.link;
   cardImage.alt = data.name;
   cardTitle.textContent = data.name;
 
-  // Обработчик лайка
+  likeCounter.textContent = data.likes.length;
+
+  if (data.likes.some(likeObj => likeObj._id === userId)) {
+    likeButton.classList.add('card__like-button_is-active');
+  }
+
+  if (data.owner._id !== userId) {
+    deleteButton.style.display = 'none';
+  } else {
+    deleteButton.addEventListener('click', () => {
+      handleCardDelete(cardElement, data._id);
+    });
+  }
+
   likeButton.addEventListener('click', () => {
-    handleLikeToggle(likeButton);
+    if (likeButton.classList.contains('card__like-button_is-active')) {
+      removeLike(data._id)
+        .then(updatedCard => {
+          likeCounter.textContent = updatedCard.likes.length;
+          likeButton.classList.remove('card__like-button_is-active');
+        })
+        .catch(err => console.log(`Ошибка при удалении лайка: ${err}`));
+    } else {
+      addLike(data._id)
+        .then(updatedCard => {
+          likeCounter.textContent = updatedCard.likes.length;
+          likeButton.classList.add('card__like-button_is-active');
+        })
+        .catch(err => console.log(`Ошибка при установке лайка: ${err}`));
+    }
   });
 
-  // Обработчик удаления
-  deleteButton.addEventListener('click', () => handleCardDelete(cardElement));
-
-  // Обработчик клика по изображению
   cardImage.addEventListener('click', () => {
     handleImageClick({
       src: data.link,
@@ -30,12 +56,4 @@ export function createCard(data, handleCardDelete, handleLikeToggle, handleImage
   });
 
   return cardElement;
-}
-
-export function deleteCard(cardElement) {
-  cardElement.remove();
-}
-
-export function toggleLike(buttonElement) {
-  buttonElement.classList.toggle('card__like-button_is-active');
 }
