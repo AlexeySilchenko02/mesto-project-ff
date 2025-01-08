@@ -1,9 +1,9 @@
-const apiKey = process.env.API_KEY;
+// const apiKey = process.env.API_KEY;
 
 const config = {
   baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-mag-4',
   headers: {
-    authorization: apiKey,
+    authorization: '87a5fae4-99cb-4360-9e5b-98d6d9e72b37',
     'Content-Type': 'application/json'
   }
 };
