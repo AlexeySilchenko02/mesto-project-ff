@@ -2,8 +2,8 @@
 function showError(inputElement, errorElement, config) {
   inputElement.classList.add(config.inputErrorClass);
 
-  if (inputElement.validity.valueMissing) {
-    errorElement.textContent = 'Вы пропустили это поле.';
+  if (inputElement.validity.patternMismatch) {
+    errorElement.textContent = inputElement.dataset.error;
   } else {
     errorElement.textContent = inputElement.validationMessage;
   }

@@ -138,6 +138,21 @@ function handleImageClick({ src, alt, caption }) {
   openModal(imagePopup);
 }
 
+function submitDelete(evt, cardElement, cardId) {
+  evt.preventDefault();
+  deleteCardOnServer(cardId)
+    .then(() => {
+      cardElement.remove();
+      closeModal(deletePopup);
+    })
+    .catch(err => console.log(`Ошибка при удалении карточки: ${err}`));
+}
+
+function handleCardDelete(cardElement, cardId) {
+  openModal(deletePopup);
+  deletePopupForm.onsubmit = (evt) => submitDelete(evt, cardElement, cardId);
+}
+
 function renderCards(cards) {
   cards.forEach(cardData => {
     const cardElement = createCard(
@@ -148,24 +163,6 @@ function renderCards(cards) {
     );
     placesList.append(cardElement);
   });
-}
-
-function handleCardDelete(cardElement, cardId) {
-  openModal(deletePopup);
-
-  deletePopupForm.removeEventListener('submit', submitDelete);
-
-  function submitDelete(evt) {
-    evt.preventDefault();
-    deleteCardOnServer(cardId)
-      .then(() => {
-        cardElement.remove();
-        closeModal(deletePopup);
-      })
-      .catch(err => console.log(`Ошибка при удалении карточки: ${err}`));
-  }
-
-  deletePopupForm.addEventListener('submit', submitDelete);
 }
 
 editProfileButton.addEventListener('click', () => {
